@@ -24,7 +24,7 @@ connectToMongo();
 
 // Middleware
 app.use(cors({
-  origin: 'https://matesfar-manager.netlify.app/'
+  origin: 'https://matesfar-manager.netlify.app'
 }));
 app.use(express.json());
 
