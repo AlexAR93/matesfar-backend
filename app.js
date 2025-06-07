@@ -23,7 +23,9 @@ configDotenv();
 connectToMongo();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'https://matesfar-manager.netlify.app/'
+}));
 app.use(express.json());
 
 // archivos estáticos desde 'public'
