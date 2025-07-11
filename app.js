@@ -24,7 +24,7 @@ connectToMongo();
 
 // Middleware
 app.use(cors({
-  origin: 'https://matesfar-manager.netlify.app'
+  origin: ['https://matesfar-manager.netlify.app','https://matesfar.netlify.app']
 }));
 app.use(express.json());
 
@@ -56,5 +56,6 @@ app.use((req, res) => {
 /* Server */
 const port = process.env.PORT || 3000;
 app.listen(port, '0.0.0.0', (err) => {
+  console.log(port)
   console.log(err ? err : `Servidor iniciado en http://localhost:${port}`);
 });

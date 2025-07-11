@@ -42,19 +42,27 @@ router.post('/upload', upload.single('image'), async (req, res) => {
 // ✅ SUBIR VARIAS imágenes
 router.post('/upload-multiple', upload.array('images', 10), async (req, res) => {
   try {
+    // Validación agregada para evitar el error
+    if (!req.files || !Array.isArray(req.files) || req.files.length === 0) {
+      return res.status(400).json({ ok: false, msg: 'No se enviaron imágenes' });
+    }
+
     const results = await Promise.all(
       req.files.map((file) => streamUpload(file.buffer))
     );
+
     const response = results.map((r) => ({
       url: r.secure_url,
       public_id: r.public_id,
     }));
+
     res.json({ ok: true, images: response });
   } catch (error) {
     console.error(error);
     res.status(500).json({ ok: false, msg: 'Error al subir imágenes' });
   }
 });
+
 
 // ✅ ELIMINAR UNA imagen
 router.delete('/:publicId', async (req, res) => {

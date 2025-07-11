@@ -4,7 +4,8 @@ const {
     getProductById,
     createProduct,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    getDiscountedProducts
 } = require("../controllers/Product.controller.js");
 const tokenValidator = require("../middlewares/token-validator.js");
 const isAdmin = require("../middlewares/admin-validator.js");
@@ -12,6 +13,7 @@ const isAdmin = require("../middlewares/admin-validator.js");
 const router = Router();
 
 router.get("/", getProducts);
+router.get('/offers', getDiscountedProducts);
 router.get("/:id", getProductById);
 
 // Solo admins

@@ -1,9 +1,41 @@
 const Product = require("../models/Product.model");
 
 const getProducts = async (req, res) => {
-    const products = await Product.find().populate("category", "name");
+  try {
+    const { category, sort, search } = req.query;
+
+    let filter = {};
+    if (category) {
+      filter.category = category;
+    }
+
+    if (search) {
+      filter.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    let sortOption = {};
+    if (sort === 'price_asc') {
+      sortOption.price = 1;
+    } else if (sort === 'price_desc') {
+      sortOption.price = -1;
+    }
+
+    const products = await Product.find(filter)
+                                  .populate("category", "name")
+                                  .sort(sortOption);
+
     res.json({ ok: true, products });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ ok: false, msg: "Error al obtener productos" });
+  }
 };
+
+
 
 const getProductById = async (req, res) => {
     try {
@@ -14,6 +46,18 @@ const getProductById = async (req, res) => {
         res.status(500).json({ ok: false, msg: "Error al buscar el producto" });
     }
 };
+
+const getDiscountedProducts = async (req, res) => {
+  try {
+    // Buscamos productos que tengan descuento activo
+    const products = await Product.find({ "discount.isActive": true }).populate("category", "name");
+
+    res.json({ ok: true, products });
+  } catch (err) {
+    res.status(500).json({ ok: false, msg: "Error al obtener productos con descuento" });
+  }
+};
+
 
 const createProduct = async (req, res) => {
     try {
@@ -50,5 +94,6 @@ module.exports = {
     getProductById,
     createProduct,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    getDiscountedProducts
 };
