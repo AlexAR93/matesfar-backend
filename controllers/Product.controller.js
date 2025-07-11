@@ -2,7 +2,7 @@ const Product = require("../models/Product.model");
 
 const getProducts = async (req, res) => {
   try {
-    const { category, sort, search } = req.query;
+    const { category, sort, search, page = 1, limit = 12 } = req.query;
 
     let filter = {};
     if (category) {
@@ -23,19 +23,24 @@ const getProducts = async (req, res) => {
       sortOption.price = -1;
     }
 
-    const products = await Product.find(filter)
-                                  .populate("category", "name")
-                                  .sort(sortOption);
+    const skip = (parseInt(page) - 1) * parseInt(limit);
 
-    res.json({ ok: true, products });
+    const [products, total] = await Promise.all([
+      Product.find(filter)
+        .populate("category", "name")
+        .sort(sortOption)
+        .skip(skip)
+        .limit(parseInt(limit)),
+      Product.countDocuments(filter)
+    ]);
+
+    res.json({ ok: true, products, total });
 
   } catch (err) {
     console.error(err);
     res.status(500).json({ ok: false, msg: "Error al obtener productos" });
   }
 };
-
-
 
 const getProductById = async (req, res) => {
     try {
