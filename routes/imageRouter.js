@@ -13,7 +13,7 @@ const streamUpload = (buffer) => {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       { 
-        folder: 'matesfar-productos',
+        folder: 'matesfar-products',
         quality: 'auto',
         transformation: [
           { width: 600, crop: 'limit' } // opcional: redimensiona si es muy grande
@@ -69,7 +69,7 @@ router.delete('/:publicId', async (req, res) => {
   const { publicId } = req.params;
   console.log(publicId)
   try {
-    await cloudinary.uploader.destroy(`matesfar-productos/${publicId}`);
+    await cloudinary.uploader.destroy(`matesfar-products/${publicId}`);
     res.json({ ok: true, msg: 'Imagen eliminada' });
   } catch (error) {
     console.error(error);
